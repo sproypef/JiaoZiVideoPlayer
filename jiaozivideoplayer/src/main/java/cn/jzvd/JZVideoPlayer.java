@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -391,6 +392,25 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         map.put(URL_KEY_DEFAULT, url);
         Object[] dataSourceObjects = new Object[1];
         dataSourceObjects[0] = map;
+        setUp(dataSourceObjects, 0, screen, objects);
+    }
+
+    public void setUp(Context context, String url, int screen, Object... objects) {
+        LinkedHashMap map = new LinkedHashMap();
+        map.put(URL_KEY_DEFAULT, url);
+        Object[] dataSourceObjects = new Object[4];
+        dataSourceObjects[0] = map;
+        dataSourceObjects[3] = context;
+        setUp(dataSourceObjects, 0, screen, objects);
+    }
+
+    public void setUp(Context context, Map<String, String> header, String url, int screen, Object... objects) {
+        LinkedHashMap map = new LinkedHashMap();
+        map.put(URL_KEY_DEFAULT, url);
+        Object[] dataSourceObjects = new Object[4];
+        dataSourceObjects[0] = map;
+        dataSourceObjects[2] = header;
+        dataSourceObjects[3] = context;
         setUp(dataSourceObjects, 0, screen, objects);
     }
 

@@ -10,12 +10,10 @@ import android.widget.Button;
 
 import com.squareup.picasso.Picasso;
 
-import cn.jzvd.JZMediaManager;
 import cn.jzvd.JZUserAction;
 import cn.jzvd.JZUserActionStandard;
 import cn.jzvd.JZVideoPlayer;
 import cn.jzvd.JZVideoPlayerStandard;
-import cn.jzvd.demo.CustomMediaPlayer.JZMediaIjkplayer;
 import cn.jzvd.demo.CustomView.MyJZVideoPlayerStandard;
 
 /**
@@ -46,7 +44,7 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
         mWebView.setOnClickListener(this);
 
         myJZVideoPlayerStandard = findViewById(R.id.jz_video);
-        myJZVideoPlayerStandard.setUp("http://jzvd.nathen.cn/342a5f7ef6124a4a8faf00e738b8bee4/cf6d9db0bd4d41f59d09ea0a81e918fd-5287d2089db37e62345123a1be272f8b.mp4"
+        myJZVideoPlayerStandard.setUp(ActivityMain.this, "https://jkanime.net/stream/jkmedia/08a58f7947668f13171f2ff842646b8d/fa0b00de20f2ba354db895a1e954c6c4/1/5e94955628e3d1c0acfef19c31a3b4a7/"
                 , JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "饺子快长大");
         Picasso.with(this)
                 .load("http://jzvd-pic.nathen.cn/jzvd-pic/1bb2ebbe-140d-4e2e-abd2-9e7e564f71ac.png")
