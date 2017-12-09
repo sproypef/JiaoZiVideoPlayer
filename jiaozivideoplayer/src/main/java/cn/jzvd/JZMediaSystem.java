@@ -27,7 +27,7 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
         try {
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            if (dataSourceObjects[1] != null) {
+            if (dataSourceObjects.length > 1 && dataSourceObjects[1] != null) {
                 mediaPlayer.setLooping((boolean) dataSourceObjects[1]);
             } else {
                 mediaPlayer.setLooping(false);
@@ -41,27 +41,34 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
             mediaPlayer.setOnInfoListener(JZMediaSystem.this);
             mediaPlayer.setOnVideoSizeChangedListener(JZMediaSystem.this);
 
-            //B:Modify
-            if (dataSourceObjects[2] == null && dataSourceObjects[3] == null) {
-                mediaPlayer.setDataSource(currentDataSource.toString());
+            Class<MediaPlayer> clazz = MediaPlayer.class;
+            Method method = clazz.getDeclaredMethod("setDataSource", String.class, Map.class);
+
+            switch (dataSourceObjects.length) {
+                case 1:
+                    mediaPlayer.setLooping(false);
+
+                    method.invoke(mediaPlayer, currentDataSource.toString(), null);
+                    break;
+                case 2:
+                    mediaPlayer.setLooping((boolean) dataSourceObjects[1]);
+
+                    method.invoke(mediaPlayer, currentDataSource.toString(), null);
+                    break;
+                case 3:
+                    method.invoke(mediaPlayer, currentDataSource.toString(), dataSourceObjects[2]);
+                    break;
+                case 4:
+                    if (dataSourceObjects[2] == null && dataSourceObjects[3] != null) {
+                        mediaPlayer.setDataSource((Context) dataSourceObjects[3], Uri.parse(currentDataSource.toString()));
+                    }
+                    if (dataSourceObjects[2] != null && dataSourceObjects[3] != null) {
+                        mediaPlayer.setDataSource((Context) dataSourceObjects[3], Uri.parse(currentDataSource.toString()), (Map<String, String>) dataSourceObjects[2]);
+                    }
+                    break;
             }
 
-            if (dataSourceObjects[2] == null && dataSourceObjects[3] != null) {
-                mediaPlayer.setDataSource((Context) dataSourceObjects[3], Uri.parse(currentDataSource.toString()));
-            }
-
-            if (dataSourceObjects[2] != null && dataSourceObjects[3] != null) {
-                mediaPlayer.setDataSource((Context) dataSourceObjects[3], Uri.parse(currentDataSource.toString()), (Map<String, String>) dataSourceObjects[2]);
-            }
-
-            if (dataSourceObjects[2] != null && dataSourceObjects[3] == null) {
-                Class<MediaPlayer> clazz = MediaPlayer.class;
-                Method method = clazz.getDeclaredMethod("setDataSource", String.class, Map.class);
-                method.invoke(mediaPlayer, currentDataSource.toString(), dataSourceObjects[2]);
-            }
-            //E:Modify
-
-            mediaPlayer.prepare();
+            mediaPlayer.prepareAsync();
         } catch (Exception e) {
             e.printStackTrace();
         }
