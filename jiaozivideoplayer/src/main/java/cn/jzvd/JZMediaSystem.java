@@ -61,8 +61,7 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
                 case 4:
                     if (dataSourceObjects[2] == null && dataSourceObjects[3] != null) {
                         mediaPlayer.setDataSource((Context) dataSourceObjects[3], Uri.parse(currentDataSource.toString()));
-                    }
-                    if (dataSourceObjects[2] != null && dataSourceObjects[3] != null) {
+                    } else if (dataSourceObjects[2] != null && dataSourceObjects[3] != null) {
                         mediaPlayer.setDataSource((Context) dataSourceObjects[3], Uri.parse(currentDataSource.toString()), (Map<String, String>) dataSourceObjects[2]);
                     }
                     break;
