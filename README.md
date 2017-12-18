@@ -2,7 +2,7 @@
 --
 <p align="center">
 <a href="http://developer.android.com/index.html"><img src="https://img.shields.io/badge/platform-android-green.svg"></a>
-<a href="http://search.maven.org/#artifactdetails%7Ccn.jzvd%7Cjiaozivideoplayer%7C5.8.2%7Caar"><img src="https://img.shields.io/badge/Maven%20Central-6.2.2-green.svg"></a>
+<a href="http://search.maven.org/#artifactdetails%7Ccn.jzvd%7Cjiaozivideoplayer%7C5.8.2%7Caar"><img src="https://img.shields.io/badge/Maven%20Central-6.2.3-green.svg"></a>
 <a href="http://choosealicense.com/licenses/mit/"><img src="https://img.shields.io/badge/license-MIT-green.svg"></a>
 <a href="https://android-arsenal.com/details/1/3269"><img src="https://img.shields.io/badge/Android%20Arsenal-jiaozivideoplayer-green.svg?style=true"></a>
 </p>
@@ -16,28 +16,25 @@
 
 Q群:490442439 验证信息:jzvd
 
-[中文文档](https://github.com/lipangit/JiaoZiVideoPlayer) [工作计划](https://github.com/lipangit/JiaoZiVideoPlayer/projects/2) [微博](http://weibo.com/2342820395/profile?topnav=1&wvr=6&is_all=1) [视频教程](https://github.com/lipangit/JiaoZiVideoPlayer/wiki/%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B)
+[中文文档](https://github.com/lipangit/JiaoZiVideoPlayer/blob/develop/README-ZH.md) [WorkPlan](https://github.com/lipangit/JiaoZiVideoPlayer/projects/2) [微博](http://weibo.com/2342820395/profile?topnav=1&wvr=6&is_all=1) [视频教程](https://github.com/lipangit/JiaoZiVideoPlayer/wiki/%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B)
 
 ## Features
 
 1. You can completely customize the UI and any function
-2. Support https and rtsp agreement, more agreement please click [here](https://developer.android.com/guide/topics/media/media-formats.html)
-3. Less than 110kb
-4. Can achieve full-screen playback, small window playback
-5. The perfect list of sliding judgment
-6. Full-screen work in multiple nested modes like ListView, ViewPager and ListView, ViewPager and Fragment
-7. Can load, pause, play and other normal state into the full screen and exit full screen
-8. A variety of video adaptation screen mode, can be covered full screen, you can cut full screen
-9. Gravity sensing automatically enter full screen
-10. Full screen gestures to modify the progress and volume
-11. Home key to exit the interface to suspend the playback, return to the interface to continue playing
-12. WebView Nested Local Video Controls
+2. One line of code to switch the playback engine, supported video formats and protocols depends on the playback engine,[android.media.MediaPlayer](https://developer.android.com/guide/topics/media/media-formats.html) [ijkplayer](https://github.com/Bilibili/ijkplayer)
+3. Perfect detection list sliding
+4. Full screen and small window option available
+5. Full-screen works in multiple nested modes like ListView, ViewPager and ListView, ViewPager and Fragment
+6. Can load, pause, play and other normal state into the full screen and exit full screen
+7. A variety of video adaptation screen mode, can be covered full screen, you can cut full screen
+8. Ability to enter full-screen automatically using gravity sensing
+9. Change progress and volume right from full screen mode
+10. Home key to exit the interface to suspend the playback, return to the interface to continue playing
+11. WebView Nested Local Video Controls
 
-For small and medium-sized companies, I think the final solution to video in android is `android.media.MediaPlayer`, other players are not in the trend, even if the `android.media.MediaPlayer` has disavantages we should make concession, if `android.media.MediaPlayer` has defect we will consider to change other player.
+## A demo showing available effects
 
-## Effect
-
-**[jiaozivideoplayer-6.2.2.apk](https://github.com/lipangit/JiaoZiVideoPlayer/releases/download/v6.2.2/jiaozivideoplayer-6.2.2.apk)**
+**[jiaozivideoplayer-6.2.3.apk](https://github.com/lipangit/JiaoZiVideoPlayer/releases/download/v6.2.3/jiaozivideoplayer-6.2.3.apk)**
 
 ![Demo Screenshot][1]
 
@@ -45,14 +42,14 @@ For small and medium-sized companies, I think the final solution to video in and
 
 ## Usage
 
-Even the custom UI, or has changed to the Library, is also the five steps to use the player.
+Only five steps to use the player.
 
 1.Import library
 ```gradle
-compile 'cn.jzvd:jiaozivideoplayer:6.2.2'
+compile 'cn.jzvd:jiaozivideoplayer:6.2.3'
 ```
 
-Or download [lib](https://github.com/lipangit/JiaoZiVideoPlayer/releases/tag/v6.2.2) (not recommended)
+Or download [lib](https://github.com/lipangit/JiaoZiVideoPlayer/releases/tag/v6.2.3) (not recommended)
 
 2.Add JZVideoPlayer in your layout
 ```xml

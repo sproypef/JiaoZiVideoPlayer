@@ -82,8 +82,8 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                     try {
-                        if (JZMediaManager.isPlaying()) {
-                            JZMediaManager.pause();
+                        if (JZVideoPlayerManager.getCurrentJzvd().currentState == JZVideoPlayer.CURRENT_STATE_PLAYING) {
+                            JZVideoPlayerManager.getCurrentJzvd().startButton.performClick();
                         }
                     } catch (IllegalStateException e) {
                         e.printStackTrace();
@@ -769,7 +769,6 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         dismissVolumeDialog();
         dismissProgressDialog();
         dismissBrightnessDialog();
-        cancelProgressTimer();
         onStateAutoComplete();
 
         if (currentScreen == SCREEN_WINDOW_FULLSCREEN || currentScreen == SCREEN_WINDOW_TINY) {
