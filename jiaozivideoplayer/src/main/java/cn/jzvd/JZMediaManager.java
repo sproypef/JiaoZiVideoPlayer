@@ -91,6 +91,7 @@ public class JZMediaManager implements TextureView.SurfaceTextureListener {
     }
 
     public void releaseMediaPlayer() {
+        mMediaHandler.removeCallbacksAndMessages(null);
         Message msg = new Message();
         msg.what = HANDLER_RELEASE;
         mMediaHandler.sendMessage(msg);
@@ -143,11 +144,14 @@ public class JZMediaManager implements TextureView.SurfaceTextureListener {
                     currentVideoWidth = 0;
                     currentVideoHeight = 0;
                     jzMediaInterface.prepare();
-                    if (surface != null) {
-                        surface.release();
+
+                    if (savedSurfaceTexture != null) {
+                        if (surface != null) {
+                            surface.release();
+                        }
+                        surface = new Surface(savedSurfaceTexture);
+                        jzMediaInterface.setSurface(surface);
                     }
-                    surface = new Surface(savedSurfaceTexture);
-                    jzMediaInterface.setSurface(surface);
                     break;
                 case HANDLER_RELEASE:
                     jzMediaInterface.release();

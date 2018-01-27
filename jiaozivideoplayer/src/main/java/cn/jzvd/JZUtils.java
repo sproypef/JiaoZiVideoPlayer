@@ -8,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Window;
 
@@ -119,8 +118,7 @@ public class JZUtils {
         SharedPreferences spn = context.getSharedPreferences("JZVD_PROGRESS",
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = spn.edit();
-        editor.putLong("newVersion:" + url.toString(), progress);
-        editor.apply();
+        editor.putLong("newVersion:" + url.toString(), progress).apply();
     }
 
     public static long getSavedProgress(Context context, Object url) {
@@ -136,15 +134,15 @@ public class JZUtils {
      * @param context context
      * @param url     if url!=null clear this url progress
      */
-    public static void clearSavedProgress(Context context, String url) {
-        if (TextUtils.isEmpty(url)) {
+    public static void clearSavedProgress(Context context, Object url) {
+        if (url == null) {
             SharedPreferences spn = context.getSharedPreferences("JZVD_PROGRESS",
                     Context.MODE_PRIVATE);
             spn.edit().clear().apply();
         } else {
             SharedPreferences spn = context.getSharedPreferences("JZVD_PROGRESS",
                     Context.MODE_PRIVATE);
-            spn.edit().putInt(url, 0).apply();
+            spn.edit().putLong("newVersion:" + url.toString(), 0).apply();
         }
     }
 

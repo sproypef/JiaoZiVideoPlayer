@@ -8,7 +8,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -116,7 +115,6 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     protected int mScreenWidth;
     protected int mScreenHeight;
     protected AudioManager mAudioManager;
-    protected Handler mHandler;
     protected ProgressTimerTask mProgressTimerTask;
     protected boolean mTouchingProgressBar;
     protected float mDownX;
@@ -381,7 +379,6 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         mScreenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
         mScreenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        mHandler = new Handler();
 
         try {
             if (isCurrentPlay()) {
@@ -466,7 +463,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                 if (!JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
                         JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
                         !JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                    showWifiDialog(JZUserAction.ON_CLICK_START_ICON);
+                    showWifiDialog();
                     return;
                 }
                 startVideo();
@@ -858,11 +855,21 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     public void clearFloatScreen() {
         JZUtils.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
         showSupportActionBar(getContext());
-        JZVideoPlayer currJzvd = JZVideoPlayerManager.getCurrentJzvd();
-        currJzvd.textureViewContainer.removeView(JZMediaManager.textureView);
         ViewGroup vp = (JZUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
                 .findViewById(Window.ID_ANDROID_CONTENT);
-        vp.removeView(currJzvd);
+        JZVideoPlayer fullJzvd = vp.findViewById(R.id.jz_fullscreen_id);
+        JZVideoPlayer tinyJzvd = vp.findViewById(R.id.jz_tiny_id);
+
+        if (fullJzvd != null) {
+            vp.removeView(fullJzvd);
+            if (fullJzvd.textureViewContainer != null)
+                fullJzvd.textureViewContainer.removeView(JZMediaManager.textureView);
+        }
+        if (tinyJzvd != null) {
+            vp.removeView(tinyJzvd);
+            if (tinyJzvd.textureViewContainer != null)
+                tinyJzvd.textureViewContainer.removeView(JZMediaManager.textureView);
+        }
         JZVideoPlayerManager.setSecondFloor(null);
     }
 
@@ -1062,6 +1069,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         clearFloatScreen();
         //2.在本jzvd上播放
         setState(currentState);
+//        removeTextureView();
         addTextureView();
     }
 
@@ -1106,7 +1114,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
 
     }
 
-    public void showWifiDialog(int event) {
+    public void showWifiDialog() {
     }
 
     public void showProgressDialog(float deltaX,
@@ -1161,7 +1169,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         public void run() {
             if (currentState == CURRENT_STATE_PLAYING || currentState == CURRENT_STATE_PAUSE) {
 //                Log.v(TAG, "onProgressUpdate " + "[" + this.hashCode() + "] ");
-                mHandler.post(new Runnable() {
+                post(new Runnable() {
                     @Override
                     public void run() {
                         long position = getCurrentPositionWhenPlaying();

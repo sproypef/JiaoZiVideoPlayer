@@ -9,8 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.media.AudioManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -67,7 +67,9 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
     protected Dialog mBrightnessDialog;
     protected ProgressBar mDialogBrightnessProgressBar;
     protected TextView mDialogBrightnessTextView;
-    private boolean brocasting = false;
+    public static long LAST_GET_BATTERYLEVEL_TIME = 0;
+    public static int LAST_GET_BATTERYLEVEL_PERCENT = 70;
+
     private BroadcastReceiver battertReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -75,21 +77,9 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
                 int level = intent.getIntExtra("level", 0);
                 int scale = intent.getIntExtra("scale", 100);
                 int percent = level * 100 / scale;
-                if (percent < 15) {
-                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_10);
-                } else if (percent >= 15 && percent < 40) {
-                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_30);
-                } else if (percent >= 40 && percent < 60) {
-                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_50);
-                } else if (percent >= 60 && percent < 80) {
-                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_70);
-                } else if (percent >= 80 && percent < 95) {
-                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_90);
-                } else if (percent >= 95 && percent <= 100) {
-                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_100);
-                }
+                LAST_GET_BATTERYLEVEL_PERCENT = percent;
+                setBatteryLevel();
                 getContext().unregisterReceiver(battertReceiver);
-                brocasting = false;
             }
         }
     };
@@ -274,7 +264,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
                 if (!JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") &&
                         !JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
                         !JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                    showWifiDialog(JZUserActionStandard.ON_CLICK_START_THUMB);
+                    showWifiDialog();
                     return;
                 }
                 onEvent(JZUserActionStandard.ON_CLICK_START_THUMB);
@@ -333,10 +323,14 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
             layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             clarityPopWindow.update(clarity, -40, 46, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
         } else if (i == R.id.retry_btn) {
+            if (dataSourceObjects == null || JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
+                Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (!JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
                     JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
                     !JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                showWifiDialog(JZUserAction.ON_CLICK_START_ICON);
+                showWifiDialog();
                 return;
             }
             initTextureView();//和开始播放的代码重复
@@ -349,15 +343,15 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
     }
 
     @Override
-    public void showWifiDialog(int action) {
-        super.showWifiDialog(action);
+    public void showWifiDialog() {
+        super.showWifiDialog();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(getResources().getString(R.string.tips_not_wifi));
         builder.setPositiveButton(getResources().getString(R.string.tips_not_wifi_confirm), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                onEvent(JZUserActionStandard.ON_CLICK_START_THUMB);
+                onEvent(JZUserActionStandard.ON_CLICK_START_WIFIDIALOG);
                 startVideo();
                 WIFI_TIP_DIALOG_SHOWED = true;
             }
@@ -366,6 +360,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                clearFloatScreen();
             }
         });
         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -423,11 +418,31 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
         SimpleDateFormat dateFormater = new SimpleDateFormat("HH:mm");
         Date date = new Date();
         videoCurrentTime.setText(dateFormater.format(date));
-        if (!brocasting) {
+        if ((System.currentTimeMillis() - LAST_GET_BATTERYLEVEL_TIME) > 30000) {
+            LAST_GET_BATTERYLEVEL_TIME = System.currentTimeMillis();
             getContext().registerReceiver(
                     battertReceiver,
                     new IntentFilter(Intent.ACTION_BATTERY_CHANGED)
             );
+        } else {
+            setBatteryLevel();
+        }
+    }
+
+    public void setBatteryLevel() {
+        int percent = LAST_GET_BATTERYLEVEL_PERCENT;
+        if (percent < 15) {
+            batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_10);
+        } else if (percent >= 15 && percent < 40) {
+            batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_30);
+        } else if (percent >= 40 && percent < 60) {
+            batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_50);
+        } else if (percent >= 60 && percent < 80) {
+            batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_70);
+        } else if (percent >= 80 && percent < 95) {
+            batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_90);
+        } else if (percent >= 95 && percent <= 100) {
+            batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_100);
         }
     }
 
@@ -610,7 +625,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
                 updateStartImage();
                 break;
             case SCREEN_WINDOW_FULLSCREEN:
-                setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.VISIBLE,
+                setAllControlsVisiblity(View.VISIBLE, View.INVISIBLE, View.VISIBLE,
                         View.INVISIBLE, View.INVISIBLE, View.INVISIBLE, View.VISIBLE);
                 updateStartImage();
                 break;
@@ -799,22 +814,20 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
         if (currentState != CURRENT_STATE_NORMAL
                 && currentState != CURRENT_STATE_ERROR
                 && currentState != CURRENT_STATE_AUTO_COMPLETE) {
-            if (getContext() != null && getContext() instanceof Activity) {
-                ((Activity) getContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        bottomContainer.setVisibility(View.INVISIBLE);
-                        topContainer.setVisibility(View.INVISIBLE);
-                        startButton.setVisibility(View.INVISIBLE);
-                        if (clarityPopWindow != null) {
-                            clarityPopWindow.dismiss();
-                        }
-                        if (currentScreen != SCREEN_WINDOW_TINY) {
-                            bottomProgressBar.setVisibility(View.VISIBLE);
-                        }
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    bottomContainer.setVisibility(View.INVISIBLE);
+                    topContainer.setVisibility(View.INVISIBLE);
+                    startButton.setVisibility(View.INVISIBLE);
+                    if (clarityPopWindow != null) {
+                        clarityPopWindow.dismiss();
                     }
-                });
-            }
+                    if (currentScreen != SCREEN_WINDOW_TINY) {
+                        bottomProgressBar.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
         }
     }
 

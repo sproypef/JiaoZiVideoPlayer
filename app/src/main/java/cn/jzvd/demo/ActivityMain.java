@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -88,6 +89,9 @@ public class ActivityMain extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * 这只是给埋点统计用户数据用的，不能写和播放相关的逻辑，监听事件请参考MyJZVideoPlayerStandard，复写函数取得相应事件
+     */
     class MyUserActionStandard implements JZUserActionStandard {
 
         @Override
