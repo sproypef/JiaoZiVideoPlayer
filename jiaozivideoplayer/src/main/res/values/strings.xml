@@ -5,6 +5,6 @@
     <string name="tips_not_wifi_cancel">Stop play</string>
     <string name="no_url">No url</string>
     <string name="replay">Replay</string>
-    <string name="error_on_loading">Error on loading</string>
-    <string name="error_on_loading_retry">Click for retry</string>
+    <string name="click_to_restart">Click to try again</string>
+    <string name="video_loading_faild">Video loading failed</string>
 </resources>
